@@ -764,6 +764,25 @@ function rF(app, tot) {
       }
       sv();
       S.msg = "✅ บันทึก HN:" + S.i.hn + " = " + t.sum + "/" + t.full + " (" + t.pct + "%)";
+      
+      // POST to GAS
+      console.log("📤 Posting to GAS:", rec);
+      fetch(GAS_URL, {
+        method: "POST",
+        body: JSON.stringify(rec),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(r => r.json())
+      .then(d => { 
+        console.log("✅ GAS Response:", d); 
+        if (d.ok) S.msg = "✅ บันทึก + ☁️ Sync สำเร็จ";
+      })
+      .catch(e => { 
+        console.error("❌ GAS Error:", e);
+        S.msg = "✅ บันทึก (รอ Sync แบบ manual)";
+      })
+      .finally(() => ren());
+      
       ren();
     } }, "💾 บันทึกข้อมูล"),
     h("button", { className: "btn btn-s", onClick: () => { rst(); ren(); } }, "📝 เพิ่มเคสต่อไป"),
